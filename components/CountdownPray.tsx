@@ -20,15 +20,15 @@ interface Prayer {
 }
 
 const CountdownPray = ({ times }: { times: Prayer }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  
+  const [currentIndex, setCurrentIndex] = useState(5);
+
   useEffect(() => {
     navigator.serviceWorker.register("/sw.js");
   });
 
   // Create Array
-  const prayName = ['Duha','Dhuhr','Asr','Maghrib','Isha','Fajr'];
-  const prayTimes = Object.values(times).slice(1);
+  const prayName = ["Fajr", "Duha", "Dhuhr", "Asr", "Maghrib", "Isha"];
+  const prayTimes = Object.values(times);
 
   // Countdown
   var date = new Date();
@@ -61,7 +61,7 @@ const CountdownPray = ({ times }: { times: Prayer }) => {
         setCurrentIndex(currentIndex + 1);
       }
     }
-  });
+  }, []);
 
   return (
     <>
