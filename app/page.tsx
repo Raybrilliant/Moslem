@@ -54,49 +54,50 @@ interface Prayer {
 }
 
 // Function to convert 12-hour time to 24-hour time
-function convertTo24Hour(time12h: string){
-  const [time, modifier] = time12h.split(' ');
-  let [hours, minutes] = time.split(':');
+function convertTo24Hour(time12h: string) {
+  const [time, modifier] = time12h.split(" ");
+  let [hours, minutes] = time.split(":");
 
-  if (hours === '12') {
-      hours = '00';
+  if (hours === "12") {
+    hours = "00";
   }
 
-  if (modifier === 'pm') {
-      hours = String(parseInt(hours, 10) + 12);
+  if (modifier === "pm") {
+    hours = String(parseInt(hours, 10) + 12);
   }
 
-  return hours + ':' + minutes;
+  return hours + ":" + minutes;
 }
 
 // Function to convert all times in the items array
-function convertPrayerTimes(prayer: Prayer){
+function convertPrayerTimes(prayer: Prayer) {
   const items = prayer.items.map((item) => ({
     fajr: convertTo24Hour(item.fajr),
     shurooq: convertTo24Hour(item.shurooq),
     dhuhr: convertTo24Hour(item.dhuhr),
     asr: convertTo24Hour(item.asr),
     maghrib: convertTo24Hour(item.maghrib),
-    isha: convertTo24Hour(item.isha)
+    isha: convertTo24Hour(item.isha),
   }));
 
   return {
     ...prayer,
-    items: items
+    items: items,
   };
 }
-export const runtime = 'edge'
-export default async function Home() {
+export const runtime = "edge";
+export default async function Home(req: Request) {
   const ip = headers().get("X-Forwarded-For");
-  const geo = await fetch(
-    "https://api.sefinek.net/api/v2/geoip/" + ip
-  ).then((res) => res.json());
-  const prayers: Prayer = await prayerTimeV3(ip == '::1' ? 'Malang' : geo.data.city);
-  const prayer = convertPrayerTimes(prayers)
+  const geo = await fetch("https://api.sefinek.net/api/v2/geoip/" + ip).then(
+    (res) => res.json()
+  );
+  // const prayers: Prayer = await prayerTimeV3(ip == '::1' ? 'Malang' : geo.data.city);
+  const prayers: Prayer = await prayerTimeV3(req.cf.city);
+  const prayer = convertPrayerTimes(prayers);
   console.log(ip);
-  
+
   // const prayers:Prayer = await prayerTime(req.geo?.city ?? 'Malang',req.geo?.country ?? 'id')
-  
+
   return (
     <>
       <div className="container py-5 min-h-screen">
