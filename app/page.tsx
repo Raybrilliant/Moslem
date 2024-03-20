@@ -91,7 +91,7 @@ export default async function Home() {
   const geo = await fetch("http://ip-api.com/json/" + ip).then(
     (res) => res.json()
   );
-  const prayers: Prayer = await prayerTimeV3(ip == '::1' ? 'Malang' : geo.data.city);
+  const prayers: Prayer = await prayerTimeV3(ip == '::1' ? 'Malang' : geo.city);
   const prayer = convertPrayerTimes(prayers);
 
   // const prayers:Prayer = await prayerTime(req.geo?.city ?? 'Malang',req.geo?.country ?? 'id')
