@@ -9,11 +9,7 @@ import nextPWA from 'next-pwa';
 //   })
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-    experimental: {
-        runtime: 'experimental-edge',
-      },
-};
+const nextConfig = {};
 
 export default nextConfig;
 // export default withPWA(nextConfig);
