@@ -93,6 +93,8 @@ export default async function Home() {
   ).then((res) => res.json());
   const prayers: Prayer = await prayerTimeV3(ip == '::1' ? 'Malang' : geo.data.city);
   const prayer = convertPrayerTimes(prayers)
+  console.log(ip);
+  
   // const prayers:Prayer = await prayerTime(req.geo?.city ?? 'Malang',req.geo?.country ?? 'id')
   
   return (
