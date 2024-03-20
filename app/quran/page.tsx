@@ -4,7 +4,6 @@ import { Suspense } from "react";
 import Loading from "./loading";
 import BottomNavbar from "@/components/BottomNavbar";
 
-export const runtime = 'edge'
 const Quran = async () => {
   const qurans = await getQuran();
 

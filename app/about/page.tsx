@@ -9,7 +9,6 @@ import { Card } from "@/components/ui/card";
 import { Suspense } from "react";
 import Loading from "../loading";
 
-export const runtime = 'edge'
 const page = () => {
   return (
     <>

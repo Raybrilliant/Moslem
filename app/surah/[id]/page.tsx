@@ -4,7 +4,6 @@ import getSurah from "@/server/getSurah";
 import { Suspense } from "react";
 import Loading from "./loading";
 
-export const runtime = 'edge'
 const Surah = async ({ params }: { params: { id: string } }) => {
   const surah = await getSurah(params.id);
   return (
