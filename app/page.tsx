@@ -86,13 +86,13 @@ function convertPrayerTimes(prayer: Prayer) {
   };
 }
 export const runtime = "edge";
-export default async function Home(req: Request) {
+export default async function Home(request:any) {
   const ip = headers().get("X-Forwarded-For");
   const geo = await fetch("https://api.sefinek.net/api/v2/geoip/" + ip).then(
     (res) => res.json()
   );
   // const prayers: Prayer = await prayerTimeV3(ip == '::1' ? 'Malang' : geo.data.city);
-  const prayers: Prayer = await prayerTimeV3(req.cf.city);
+  const prayers: Prayer = await prayerTimeV3(request.cf.city);
   const prayer = convertPrayerTimes(prayers);
   console.log(ip);
 
