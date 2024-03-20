@@ -88,7 +88,7 @@ function convertPrayerTimes(prayer: Prayer) {
 export const runtime = "edge";
 export default async function Home() {
   const ip = headers().get("cf-connecting-ip");
-  const geo = await fetch("https://api.sefinek.net/api/v2/geoip/" + ip).then(
+  const geo = await fetch("http://ip-api.com/json/" + ip).then(
     (res) => res.json()
   );
   const prayers: Prayer = await prayerTimeV3(ip == '::1' ? 'Malang' : geo.data.city);
