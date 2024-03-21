@@ -1,14 +1,14 @@
 "use client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-// interface Prayer {
-//   Fajr: number,
-//   Duha: number,
-//   Dhuhr: number,
-//   Asr: number,
-//   Maghrib: number,
-//   Isha: number,
-// }
+interface PrayerV2 {
+  Fajr: number,
+  Duha: number,
+  Dhuhr: number,
+  Asr: number,
+  Maghrib: number,
+  Isha: number,
+}
 
 interface Prayer {
   fajr: string;
@@ -19,7 +19,7 @@ interface Prayer {
   isha: string;
 }
 
-const CountdownPray = ({ times }: { times: Prayer }) => {
+const CountdownPray = ({ times }: { times: Prayer | PrayerV2 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {

@@ -12,5 +12,10 @@ export const prayerTimeV2 = async (ip:string|null) => {
 }
 
 export const prayerTimeV3 = async(city:string) => {
+  try {
     return await fetch(`https://muslimsalat.com/${city}/daily/5.json?key=0f9c2cc71fb0b31195448d90881e243c`).then((res)=>res.json())
+  }
+   catch (error) {
+    return undefined
+  }
 }
