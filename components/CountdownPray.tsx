@@ -20,7 +20,7 @@ interface Prayer {
 }
 
 const CountdownPray = ({ times }: { times: Prayer }) => {
-  const [currentIndex, setCurrentIndex] = useState(5);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     navigator.serviceWorker.register("/sw.js");
@@ -61,7 +61,7 @@ const CountdownPray = ({ times }: { times: Prayer }) => {
         setCurrentIndex(currentIndex + 1);
       }
     }
-  }, []);
+  }, [currentIndex]);
 
   return (
     <>
