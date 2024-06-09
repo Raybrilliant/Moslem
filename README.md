@@ -2,6 +2,7 @@
 ## Moslem App: Your Private Sanctuary for Faith
 
 Moslem App PWA application who designed to be your trusted companion on your Islamic journey. We prioritize user comfort and privacy, offering essential Islamic resources without any compromises.
+!['cover-img'](public/cover.png)
 
 ## Features:
 
