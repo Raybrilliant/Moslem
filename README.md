@@ -1,36 +1,22 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+## Moslem App: Your Private Sanctuary for Faith
 
-First, run the development server:
+Moslem App PWA application who designed to be your trusted companion on your Islamic journey. We prioritize user comfort and privacy, offering essential Islamic resources without any compromises.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Accurate Prayer Times:** Get notified of upcoming prayer times with precision, ensuring you stay connected to your faith throughout the day.
+- **Complete Quran:** Access the full Quran text for recitation and reflection, fostering a deeper understanding of your faith.
+- **Privacy Focused:** Moslem App respects your privacy. We don't include any ads or tracking tags, and we don't request or store any user data. Your faith is a personal experience, and we keep it that way.
+- **Simple and User-Friendly Interface:** The app boasts a clean and intuitive design, allowing you to navigate seamlessly and focus on your religious practice.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Moslem App is perfect for:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Muslims who want a reliable and private prayer time notification app.
+- Individuals seeking a complete and accessible Quran resource.
+- Anyone who values a distraction-free environment for their faith.
+- We are committed to continuous improvement and welcome your feedback!
 
-## Learn More
+Check Moslem App today and experience the difference!
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Available on: [Moslem App](https://moslem-app.pages.dev/)
