@@ -4,6 +4,7 @@
 	import { resolve } from '$app/paths';
 	import { BookOpen, Compass, Home, Info, Languages, Moon, Sun } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { startAdzan } from '$lib/adzan';
 	import { i18n, initLang, toggleLang, t } from '$lib/i18n.svelte';
 	import type { Component } from 'svelte';
 
@@ -26,12 +27,12 @@
 		localStorage.setItem('moslem:theme', isDark ? 'dark' : 'light');
 	}
 
-	const tabs: { href: string; label: string; icon: Component }[] = [
+	const tabs = $derived([
 		{ href: '/', label: t('nav.prayer'), icon: Home },
 		{ href: '/qibla', label: t('nav.qibla'), icon: Compass },
 		{ href: '/quran', label: t('nav.quran'), icon: BookOpen },
 		{ href: '/about', label: t('nav.about'), icon: Info }
-	];
+	]);
 
 	const active = (href: string) =>
 		href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
