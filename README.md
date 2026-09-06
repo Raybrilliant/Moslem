@@ -1,23 +1,27 @@
+# Moslem
 
-## Moslem App: Your Private Sanctuary for Faith
+Jadwal sholat & Al-Qur'an (114 surah, terjemahan + tafsir Indonesia, audio, penanda bacaan). PWA ringan, dibangun dengan **SvelteKit 5 + Tailwind CSS 4 + shadcn-svelte** (style vega).
 
-Moslem App PWA application who designed to be your trusted companion on your Islamic journey. We prioritize user comfort and privacy, offering essential Islamic resources without any compromises.
-!['cover-img'](public/cover.png)
+Identitas visual: emerald pekat + aksen emas, ilustrasi masjid (`day`/`night`/`mosque.png`), ornamen bintang segi delapan (`.pattern-star`), Noto Serif untuk judul, Amiri untuk teks Arab, Uthmanic untuk ayat.
 
-## Features:
+## Menjalankan
 
-- **Accurate Prayer Times:** Get notified of upcoming prayer times with precision, ensuring you stay connected to your faith throughout the day.
-- **Complete Quran:** Access the full Quran text for recitation and reflection, fostering a deeper understanding of your faith.
-- **Privacy Focused:** Moslem App respects your privacy. We don't include any ads or tracking tags, and we don't request or store any user data. Your faith is a personal experience, and we keep it that way.
-- **Simple and User-Friendly Interface:** The app boasts a clean and intuitive design, allowing you to navigate seamlessly and focus on your religious practice.
+```sh
+bun install
+bun run dev      # development
+bun run build    # production build
+bun run preview  # pratinjau hasil build
+```
 
-## Moslem App is perfect for:
+## Struktur
 
-- Muslims who want a reliable and private prayer time notification app.
-- Individuals seeking a complete and accessible Quran resource.
-- Anyone who values a distraction-free environment for their faith.
-- We are committed to continuous improvement and welcome your feedback!
+- `src/routes/` — halaman (`/` sholat, `/quran` daftar surah, `/surah/[id]` baca, `/about`)
+- `src/lib/components/ui/` — komponen shadcn-svelte (button, card, input, badge, separator, slider, switch, accordion, drawer, skeleton)
+- `src/lib/server/quran.ts` — ambil data dari api.quran.gading.dev (SSR)
+- `src/lib/local.ts` — preferensi di localStorage (kota, tema, ukuran font, penanda ayat)
+- Waktu sholat: api.aladhan.com (metode 20 / Kemenag), kota tersimpan di perangkat
+- Audio: cdn.islamic.network (Mishary Alafasy, per surah)
 
-Check Moslem App today and experience the difference!
+## Deploy
 
-Available on: [Moslem App](https://moslem-app.pages.dev/)
+`adapter-auto` terpasang; ganti ke `@sveltejs/adapter-cloudflare` (atau lainnya) untuk deploy ke platform tertentu.
