@@ -4,6 +4,7 @@
 	import { Card } from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
 	import { getLastRead, type LastRead } from '$lib/local';
+	import { t } from '$lib/i18n.svelte';
 	import type { SurahMeta } from '$lib/types';
 
 	let { data } = $props();
@@ -31,12 +32,12 @@
 </script>
 
 <svelte:head>
-	<title>Moslem — Al-Qur'an</title>
-	<meta name="description" content="Baca Al-Qur'an dengan terjemahan dan tafsir" />
+	<title>Moslem — {t('quran.title')}</title>
+	<meta name="description" content={t('quran.subtitle')} />
 </svelte:head>
 
-<h1 class="font-serif text-2xl font-bold tracking-tight">Al-Qur'an</h1>
-<p class="mt-1 text-sm text-muted-foreground">114 surah • terjemahan & tafsir Indonesia</p>
+<h1 class="font-serif text-2xl font-bold tracking-tight">{t('quran.title')}</h1>
+<p class="mt-1 text-sm text-muted-foreground">{t('quran.subtitle')}</p>
 
 <!-- Pencarian -->
 <div class="relative mt-4">
@@ -44,7 +45,7 @@
 	<Input
 		type="search"
 		bind:value={q}
-		placeholder="Cari surah… (mis. Al-Kahf atau 18)"
+		placeholder={t('quran.search')}
 		aria-label="Cari surah"
 		class="pl-9"
 	/>
@@ -59,9 +60,9 @@
 					<BookOpenText size={20} />
 				</span>
 				<div class="min-w-0 flex-1">
-					<p class="text-xs uppercase tracking-wider opacity-75">Lanjutkan Membaca</p>
+					<p class="text-xs uppercase tracking-wider opacity-75">{t('quran.continue')}</p>
 					<p class="truncate font-semibold">
-						{lastSurah.name.transliteration.id} • Ayat {last!.verse}
+						{lastSurah.name.transliteration.id} • {t('quran.verses')} {last!.verse}
 					</p>
 				</div>
 				<span class="font-arab shrink-0 text-2xl opacity-90">{lastSurah.name.short}</span>
@@ -83,13 +84,13 @@
 				<span class="min-w-0 flex-1">
 					<span class="block truncate font-semibold">{s.name.transliteration.id}</span>
 					<span class="block truncate text-xs text-muted-foreground">
-						{s.name.translation.id} • {s.numberOfVerses} ayat • {s.revelation.id}
+						{s.name.translation.id} • {s.numberOfVerses} {t('quran.verses')} • {s.revelation.id}
 					</span>
 				</span>
 				<span class="font-arab shrink-0 text-xl text-primary">{s.name.short}</span>
 			</Card>
 		</a>
 	{:else}
-		<p class="py-12 text-center text-sm text-muted-foreground">Surah “{q}” tidak ditemukan.</p>
+		<p class="py-12 text-center text-sm text-muted-foreground">“{q}” {t('quran.notFound')}</p>
 	{/each}
 </div>

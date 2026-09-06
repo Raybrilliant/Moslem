@@ -18,6 +18,7 @@
 	import { Slider } from '$lib/components/ui/slider';
 	import { Switch } from '$lib/components/ui/switch';
 	import { getSettings, getLastRead, removeLastRead, setLastRead, setSettings } from '$lib/local';
+	import { t } from '$lib/i18n.svelte';
 
 	let { data } = $props();
 
@@ -99,10 +100,10 @@
 </script>
 
 <svelte:head>
-	<title>Moslem — Surah {surah.name.transliteration.id}</title>
+	<title>Moslem — {t('quran.title')} {surah.name.transliteration.id}</title>
 	<meta
 		name="description"
-		content="Surah {surah.name.transliteration.id} ({surah.name.translation.id}) beserta terjemahan dan tafsir"
+		content="Surah {surah.name.transliteration.id} ({surah.name.translation.id})"
 	/>
 </svelte:head>
 
@@ -111,14 +112,14 @@
 	class="sticky top-[57px] z-30 -mx-4 mb-4 border-b border-border bg-background px-4 py-2"
 >
 	<div class="flex items-center justify-between">
-		<Button variant="ghost" size="icon" href={resolve('/quran')} aria-label="Kembali ke daftar surah">
+		<Button variant="ghost" size="icon" href={resolve('/quran')} aria-label={t('quran.back')}>
 			<ChevronLeft />
 		</Button>
 		<p class="truncate px-2 font-serif text-sm font-semibold">{surah.name.transliteration.id}</p>
 		<Drawer.Root>
 			<Drawer.Trigger
 				class="inline-flex size-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-				aria-label="Pengaturan baca"
+				aria-label={t('surah.title')}
 			>
 				<Settings2 size={18} />
 			</Drawer.Trigger>

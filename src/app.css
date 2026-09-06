@@ -138,6 +138,9 @@ body {
 	}
 	body {
 		@apply bg-background text-foreground;
+		/* Nuansa native: tanpa double-tap zoom & tanpa pull-to-refresh */
+		touch-action: manipulation;
+		overscroll-behavior-y: none;
 	}
 	html {
 		@apply font-sans;

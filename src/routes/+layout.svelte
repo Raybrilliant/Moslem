@@ -2,16 +2,17 @@
 	import '../app.css';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { BookOpen, Compass, Home, Info, Moon, Sun } from '@lucide/svelte';
+	import { BookOpen, Compass, Home, Info, Languages, Moon, Sun } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { startAdzan } from '$lib/adzan';
+	import { i18n, initLang, toggleLang, t } from '$lib/i18n.svelte';
 	import type { Component } from 'svelte';
 
 	let { children } = $props();
 
-	// PWA + notifikasi adzan (sekali per muat penuh; idempotent)
+	// PWA + notifikasi adzan (sekali per muat penuh; idempotent) + pulihkan bahasa
 	$effect(() => {
 		startAdzan();
+		initLang();
 	});
 
 	let isDark = $state(false);
@@ -26,10 +27,10 @@
 	}
 
 	const tabs: { href: string; label: string; icon: Component }[] = [
-		{ href: '/', label: 'Sholat', icon: Home },
-		{ href: '/qibla', label: 'Kiblat', icon: Compass },
-		{ href: '/quran', label: "Al-Qur'an", icon: BookOpen },
-		{ href: '/about', label: 'Tentang', icon: Info }
+		{ href: '/', label: t('nav.prayer'), icon: Home },
+		{ href: '/qibla', label: t('nav.qibla'), icon: Compass },
+		{ href: '/quran', label: t('nav.quran'), icon: BookOpen },
+		{ href: '/about', label: t('nav.about'), icon: Info }
 	];
 
 	const active = (href: string) =>
@@ -42,9 +43,21 @@
 			<span class="text-lg leading-none text-gold">✦</span>
 			<span class="font-serif text-xl font-bold tracking-tight">Moslem</span>
 		</a>
-		<Button variant="ghost" size="icon" onclick={toggleTheme} aria-label="Ganti tema terang/gelap">
-			{#if isDark}<Sun />{:else}<Moon />{/if}
-		</Button>
+		<div class="flex items-center gap-1">
+			<Button
+				variant="ghost"
+				size="sm"
+				class="gap-1.5 font-serif text-xs font-bold"
+				onclick={toggleLang}
+				aria-label="Ganti bahasa / Switch language"
+			>
+				<Languages size={16} />
+				{i18n.lang.toUpperCase()}
+			</Button>
+			<Button variant="ghost" size="icon" onclick={toggleTheme} aria-label="Ganti tema terang/gelap">
+				{#if isDark}<Sun />{:else}<Moon />{/if}
+			</Button>
+		</div>
 	</div>
 </header>
 

@@ -4,6 +4,7 @@
 	import { Card } from '$lib/components/ui/card';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import { getCity } from '$lib/local';
+	import { t } from '$lib/i18n.svelte';
 
 	const KAABA = { lat: 21.4225, lon: 39.8262 };
 
@@ -142,14 +143,14 @@
 </script>
 
 <svelte:head>
-	<title>Moslem — Kompas Kiblat</title>
-	<meta name="description" content="Kompas arah kiblat berbasis lokasi dan sensor ponsel" />
+	<title>Moslem — {t('qibla.title')}</title>
+	<meta name="description" content={t('qibla.desc')} />
 </svelte:head>
 
 <Card class="gap-0 overflow-hidden p-0">
 	<div class="pattern-star bg-primary px-5 py-4 text-primary-foreground">
-		<p class="font-serif text-lg font-bold">Kompas Kiblat</p>
-		<p class="mt-1 text-xs opacity-80">Hadapkan ponsel hingga panah emas menunjuk ke atas</p>
+		<p class="font-serif text-lg font-bold">{t('qibla.title')}</p>
+		<p class="mt-1 text-xs opacity-80">{t('qibla.desc')}</p>
 	</div>
 
 	<div class="flex flex-col items-center gap-5 py-8">
@@ -157,9 +158,7 @@
 			<Skeleton class="size-64 rounded-full" />
 			<Skeleton class="h-4 w-40" />
 		{:else if !located}
-			<p class="max-w-xs text-center text-sm text-muted-foreground">
-				Tidak bisa menentukan lokasi. Izinkan akses lokasi, lalu muat ulang halaman.
-			</p>
+			<p class="max-w-xs text-center text-sm text-muted-foreground">{t('qibla.noLocation')}</p>
 		{:else}
 			<!-- Kompas -->
 			<div class="relative size-64 sm:size-72">
@@ -247,16 +246,16 @@
 
 			{#if heading === null}
 				{#if denied}
-					<p class="text-sm text-muted-foreground">Izin sensor kompas ditolak.</p>
+					<p class="text-sm text-muted-foreground">{t('qibla.denied')}</p>
 				{/if}
-				<Button onclick={enableCompass}>Aktifkan Kompas</Button>
+				<Button onclick={enableCompass}>{t('qibla.enable')}</Button>
 			{:else if aligned}
-				<Badge>✓ Anda menghadap kiblat</Badge>
+				<Badge>{t('qibla.aligned')}</Badge>
 			{/if}
 
 			<p class="text-sm text-muted-foreground">
-				{#if heading !== null}Hadap {Math.round(heading)}° ·{/if}
-				Kiblat {Math.round(bearing)}° · {distance} km ke Ka'bah
+				{#if heading !== null}{t('qibla.heading')} {Math.round(heading)}° ·{/if}
+				{t('qibla.bearing')} {Math.round(bearing)}° · {distance} {t('qibla.kmTo')}
 			</p>
 		{/if}
 	</div>

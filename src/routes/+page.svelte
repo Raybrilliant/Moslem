@@ -9,16 +9,17 @@
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import { getCity, setCity } from '$lib/local';
 	import { syncPush } from '$lib/adzan';
+	import { i18n, locale, t } from '$lib/i18n.svelte';
 
 	type PrayerKey = 'Fajr' | 'Sunrise' | 'Dhuhr' | 'Asr' | 'Maghrib' | 'Isha';
 
-	const PRAYERS: { key: PrayerKey; label: string }[] = [
-		{ key: 'Fajr', label: 'Subuh' },
-		{ key: 'Sunrise', label: 'Terbit' },
-		{ key: 'Dhuhr', label: 'Dzuhur' },
-		{ key: 'Asr', label: 'Ashar' },
-		{ key: 'Maghrib', label: 'Maghrib' },
-		{ key: 'Isha', label: 'Isya' }
+	const PRAYERS: { key: PrayerKey }[] = [
+		{ key: 'Fajr' },
+		{ key: 'Sunrise' },
+		{ key: 'Dhuhr' },
+		{ key: 'Asr' },
+		{ key: 'Maghrib' },
+		{ key: 'Isha' }
 	];
 
 	let city = $state('Malang');
@@ -102,7 +103,9 @@
 		syncPush();
 	}
 
-	const list = $derived(timings ? PRAYERS.map((p) => ({ ...p, time: timings![p.key] })) : []);
+	const list = $derived(
+		timings ? PRAYERS.map((p) => ({ ...p, time: timings![p.key], label: t(`p.${p.key}`) })) : []
+	);
 
 	const next = $derived.by(() => {
 		if (!list.length) return null;
@@ -126,7 +129,7 @@
 	});
 
 	const today = $derived(
-		now.toLocaleDateString('id-ID', {
+		now.toLocaleDateString(locale(), {
 			weekday: 'long',
 			day: 'numeric',
 			month: 'long',
@@ -143,20 +146,27 @@
 			const [hh, mm] = timings[k].split(':').map(Number);
 			return hh * 60 + mm;
 		};
-		if (h < at('Fajr')) return { src: '/night.png', filter: '', label: 'malam' };
-		if (h < at('Sunrise')) return { src: '/night.png', filter: 'brightness(1.25)', label: 'subuh' };
-		if (h < at('Dhuhr')) return { src: '/day.png', filter: 'brightness(0.85) sepia(0.2)', label: 'pagi' };
-		if (h < at('Asr')) return { src: '/day.png', filter: '', label: 'siang' };
+		if (h < at('Fajr')) return { src: '/night.png', filter: '', label: t('scene.night') };
+		if (h < at('Sunrise'))
+			return { src: '/night.png', filter: 'brightness(1.25)', label: t('scene.dawn') };
+		if (h < at('Dhuhr'))
+			return { src: '/day.png', filter: 'brightness(0.85) sepia(0.2)', label: t('scene.morning') };
+		if (h < at('Asr')) return { src: '/day.png', filter: '', label: t('scene.day') };
 		if (h < at('Maghrib'))
-			return { src: '/day.png', filter: 'sepia(0.45) brightness(0.85) saturate(1.15)', label: 'senja' };
-		if (h < at('Isha')) return { src: '/night.png', filter: 'brightness(1.35) sepia(0.35)', label: 'maghrib' };
-		return { src: '/night.png', filter: '', label: 'malam' };
+			return {
+				src: '/day.png',
+				filter: 'sepia(0.45) brightness(0.85) saturate(1.15)',
+				label: t('scene.dusk')
+			};
+		if (h < at('Isha'))
+			return { src: '/night.png', filter: 'brightness(1.35) sepia(0.35)', label: t('scene.maghrib') };
+		return { src: '/night.png', filter: '', label: t('scene.night') };
 	});
 </script>
 
 <svelte:head>
-	<title>Moslem — Jadwal Sholat</title>
-	<meta name="description" content="Jadwal waktu sholat dan Al-Qur'an" />
+	<title>{t('home.title')}</title>
+	<meta name="description" content={t('home.desc')} />
 </svelte:head>
 
 <Card class="gap-0 overflow-hidden p-0">
@@ -171,15 +181,15 @@
 			<Button
 				size="sm"
 				variant="outline"
-				class="border-white/25 bg-white/10 text-primary-foreground hover:bg-white/20 hover:text-primary-foreground"
+				class="max-w-[45%] border-white/25 bg-white/10 px-3 text-primary-foreground hover:bg-white/20 hover:text-primary-foreground"
 				onclick={() => {
 					cityInput = city;
 					editing = !editing;
 				}}
 			>
-				<MapPin />
-				{city}
-				<Pencil />
+				<MapPin class="shrink-0" />
+				<span class="truncate">{city}</span>
+				<Pencil class="shrink-0" />
 			</Button>
 		</div>
 
@@ -187,11 +197,11 @@
 			<form onsubmit={saveCity} transition:slide class="mt-3 flex gap-2">
 				<Input
 					bind:value={cityInput}
-					placeholder="Nama kota, mis. Malang"
+					placeholder={t('home.cityPlaceholder')}
 					aria-label="Nama kota"
 					class="border-white/25 bg-white/10 text-primary-foreground placeholder:text-primary-foreground/50"
 				/>
-				<Button type="submit" variant="secondary">Simpan</Button>
+				<Button type="submit" variant="secondary">{t('home.save')}</Button>
 			</form>
 		{/if}
 	</div>
@@ -203,8 +213,10 @@
 			<Skeleton class="mt-4 h-3.5 w-28" />
 			<Skeleton class="mt-2 h-10 w-44" />
 		{:else if failed}
-			<p class="my-4 text-center text-sm text-muted-foreground">Gagal memuat jadwal untuk “{city}”.</p>
-			<Button variant="outline" size="sm" onclick={() => load(city)}>Coba Lagi</Button>
+			<p class="my-4 text-center text-sm text-muted-foreground">
+				{t('home.failed')} “{city}”.
+			</p>
+			<Button variant="outline" size="sm" onclick={() => load(city)}>{t('home.retry')}</Button>
 		{:else}
 			<img
 				src={scene?.src ?? '/day.png'}
@@ -213,9 +225,9 @@
 				style="transition: filter 1s"
 				class="h-36 w-auto"
 			/>
-			<p class="mt-3 text-sm text-muted-foreground">Menuju waktu {next?.label}</p>
+			<p class="mt-3 text-sm text-muted-foreground">{t('home.until')} {next?.label}</p>
 			<p class="font-serif text-5xl font-bold tracking-tight tabular-nums">{countdown}</p>
-			<p class="mt-1 text-xs text-muted-foreground">pukul {next?.time} WIB</p>
+			<p class="mt-1 text-xs text-muted-foreground">{t('home.at')} {next?.time} WIB</p>
 		{/if}
 	</div>
 
@@ -236,7 +248,7 @@
 				<div class="flex items-center justify-between px-5 py-3.5 {isNext ? 'bg-accent' : ''}">
 					<div class="flex items-center gap-2 {isNext ? 'font-semibold text-accent-foreground' : ''}">
 						{p.label}
-						{#if isNext}<Badge>Berikutnya</Badge>{/if}
+						{#if isNext}<Badge>{t('home.next')}</Badge>{/if}
 					</div>
 					<span class="font-medium tabular-nums">{p.time}</span>
 				</div>
