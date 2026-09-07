@@ -31,34 +31,50 @@
 	let timings = $state<Record<PrayerKey, string> | null>(null);
 	let hijri = $state('');
 	let now = $state(new Date());
+	let manual = false; // kota diset manual -> stop auto-follow sampai halaman dibuka lagi
+	let lastFix: { lat: number; lon: number } | null = null;
+	let watchId: number | null = null;
 
 	$effect(() => {
 		const t = setInterval(() => (now = new Date()), 1000);
 		return () => clearInterval(t);
 	});
 
-	// Hydration: kota tersimpan, atau minta lokasi perangkat sekali di awal
+	// Hydration: kota tersimpan dulu biar instan, lalu ikuti lokasi perangkat
+	// (watchPosition) sehingga pindah kota otomatis ikut berubah.
 	$effect(() => {
 		const saved = getCity();
 		if (saved) {
 			city = saved;
 			ready = true;
-		} else if ('geolocation' in navigator) {
-			navigator.geolocation.getCurrentPosition(
-				async (pos) => {
-					const c = await reverseCity(pos.coords.latitude, pos.coords.longitude);
-					city = c ?? city;
-					setCity(city);
-					ready = true;
-					syncPush(); // kota baru: sinkron subscription push
-				},
-				() => (ready = true), // ditolak: pakai kota default + input manual
-				{ timeout: 10_000 }
-			);
-		} else {
+		} else if (!('geolocation' in navigator)) {
 			ready = true;
 		}
+		if ('geolocation' in navigator) {
+			watchId = navigator.geolocation.watchPosition(
+				onFix,
+				() => (ready = true), // ditolak/gagal: pakai kota tersimpan/default
+				{ enableHighAccuracy: false, maximumAge: 300_000, timeout: 15_000 }
+			);
+		}
+		return () => {
+			if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+		};
 	});
+
+	async function onFix(pos: GeolocationPosition) {
+		ready = true;
+		if (manual) return;
+		const { latitude: lat, longitude: lon } = pos.coords;
+		// throttling: proses ulang hanya kalau pindah >~2km dari fix terakhir
+		if (lastFix && Math.abs(lat - lastFix.lat) + Math.abs(lon - lastFix.lon) < 0.02) return;
+		lastFix = { lat, lon };
+		const c = await reverseCity(lat, lon);
+		if (!c || manual || c === city) return;
+		city = c;
+		setCity(c);
+		syncPush(); // kota baru: sinkron subscription push
+	}
 
 	$effect(() => {
 		if (ready) load(city);
@@ -99,6 +115,7 @@
 		if (!c) return;
 		city = c;
 		setCity(c);
+		manual = true; // hormati pilihan manual, jangan ditimpa GPS
 		editing = false;
 		syncPush();
 	}
