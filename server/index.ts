@@ -14,11 +14,19 @@ webpush.setVapidDetails('mailto:admin@example.com', PUB, PRIV);
 
 type Sub = { endpoint: string; keys: { p256dh: string; auth: string }; city: string };
 const FILE = new URL('../data/subscriptions.json', import.meta.url);
+const FIRED_FILE = new URL('../data/fired.json', import.meta.url);
 let subs: Sub[] = existsSync(FILE) ? JSON.parse(readFileSync(FILE, 'utf8')) : [];
+const fired = new Set<string>(
+	existsSync(FIRED_FILE) ? JSON.parse(readFileSync(FIRED_FILE, 'utf8')) : []
+);
 
 const save = () => {
 	mkdirSync(new URL('../data/', import.meta.url), { recursive: true });
 	writeFileSync(FILE, JSON.stringify(subs, null, 2));
+};
+const saveFired = () => {
+	mkdirSync(new URL('../data/', import.meta.url), { recursive: true });
+	writeFileSync(FIRED_FILE, JSON.stringify([...fired], null, 2));
 };
 
 const LABELS: Record<string, string> = {
@@ -31,7 +39,6 @@ const LABELS: Record<string, string> = {
 };
 
 const dayCache = new Map<string, { day: string; timings: Record<string, string> }>();
-const fired = new Set<string>();
 
 async function loadTimings(city: string, day: string) {
 	try {
@@ -43,10 +50,31 @@ async function loadTimings(city: string, day: string) {
 	} catch {}
 }
 
+// Semua waktu dihitung dalam WIB (zona timings aladhan), apa pun TZ container.
+// Dulu pakai jam lokal server: container UTC -> tidak pernah match / salah waktu.
+const hmFmt = new Intl.DateTimeFormat('en-GB', {
+	timeZone: 'Asia/Jakarta',
+	hour12: false,
+	hourCycle: 'h23',
+	hour: '2-digit',
+	minute: '2-digit'
+});
+const dayFmt = new Intl.DateTimeFormat('en-CA', {
+	timeZone: 'Asia/Jakarta',
+	year: 'numeric',
+	month: '2-digit',
+	day: '2-digit'
+});
+const toMin = (hm: string) => Number(hm.slice(0, 2)) * 60 + Number(hm.slice(3, 5));
+
+// ponytail: jendela kirim 10 menit setelah waktu sholat. Dulu match menit persis:
+// tick telat satu menit saja (redeploy, fetch lambat) -> notifikasi hangus.
+const GRACE = 10;
+
 async function tick() {
 	const now = new Date();
-	const hm = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-	const day = now.toISOString().slice(0, 10);
+	const cur = toMin(hmFmt.format(now));
+	const day = dayFmt.format(now);
 	for (const city of new Set(subs.map((s) => s.city))) {
 		let c = dayCache.get(city);
 		if (!c || c.day !== day) {
@@ -56,12 +84,18 @@ async function tick() {
 		if (!c) continue;
 		for (const [key, label] of Object.entries(LABELS)) {
 			const t = c.timings[key]?.slice(0, 5);
+			if (!t) continue;
 			const id = `${city}-${key}-${day}`;
-			if (!t || t !== hm || fired.has(id)) continue;
+			const late = cur - toMin(t);
+			if (fired.has(id) || late < 0 || late > GRACE) continue;
 			fired.add(id);
+			console.log(`[adzan] ${day} ${city}: kirim ${label} ${t} (telat ${late} mnt)`);
 			await pushCity(city, `Masuk waktu ${label}`, `${label} pukul ${t} WIB — ${city}`);
 		}
 	}
+	// buang id hari-hari lama biar file tetap kecil
+	for (const id of fired) if (!id.endsWith(day)) fired.delete(id);
+	saveFired();
 }
 
 async function pushCity(city: string, title: string, body: string) {
